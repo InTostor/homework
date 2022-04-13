@@ -1,0 +1,6 @@
+message = 0b1001101110
+
+l=10
+
+l+1+k mod 512 = 448
+message = message + '0'*k
