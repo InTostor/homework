@@ -1,0 +1,131 @@
+mainPath = str(__file__).replace("main.py", "")
+levelsPath = mainPath+"\\levels\\"
+print(mainPath)
+
+import keyboard
+from termcolor import colored, cprint
+import os
+from levelparser import *
+
+clear = lambda: os.system('cls')
+
+
+block_keyboard=False
+
+levelCount = 1
+
+
+playerPos = [5, 5]
+objects = ("-", "#", "out")
+# level = [
+#     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+#     [1,1,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2],
+#     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,1,0,0,0,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,0,0,0,1,0,0,0,0,0,0,0,0,1],
+#     [1,0,0,0,0,0,1,1,1,0,0,0,0,0,0,1],
+#     [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
+# ]
+
+level = getLevel(levelsPath+"level"+str(levelCount)+".lvl")
+
+
+
+blocking = [1,228]
+
+def clamp(n, smallest, largest): return max(smallest, min(n, largest))
+
+def wasdCoords(pos):
+    # interrupts code
+    
+    while True:
+        global block_keyboard
+        w=keyboard.is_pressed('w')
+        a=keyboard.is_pressed('a')
+        s=keyboard.is_pressed('s')
+        d=keyboard.is_pressed('d')
+        if not( w|a|s|d):
+            block_keyboard=False
+        if block_keyboard:
+            break
+  
+
+        if w :
+            near = level[pos[1]-1][pos[0]]            
+            if not near in blocking:            
+                pos[1]-=1
+            block_keyboard=True
+            break
+        if a:
+            near = level[pos[1]][pos[0]-1]
+            if not near in blocking:
+                pos[0]-=1
+            block_keyboard=True
+            break
+        if s:
+            near = level[pos[1]+1][pos[0]]
+            print(near)
+            if not near in blocking:
+                pos[1]+=1
+            block_keyboard=True
+            break
+        if d:
+            near = level[pos[1]][pos[0]+1]
+            if not near in blocking:
+                pos[0]+=1
+            block_keyboard=True
+            break
+
+    return pos
+
+
+def numToSymbol(lst):
+    out = []
+    for i in range(0, len(lst)):
+        out.append(objects[lst[i]])
+    return out[::1]
+
+def drawLevel(lvl,pos):
+    
+    out=[]
+    for i in range(0,len(lvl)):
+        out.append(numToSymbol(lvl[i]))
+    
+    x,y=pos[1],pos[0]
+    x,y=clamp(x,0,8),clamp(y,0,len(lvl[0])-1)
+    out[x][y]="p"
+    outstr=""
+    for i in range(0,len(lvl)):
+        outstr = outstr+" ".join(out[i])+"\n"
+        # print(" ".join(out[i]))
+    print(outstr)
+    return out
+
+
+
+while True:
+    clear()
+    print("*"*30)
+    print(playerPos)
+    print("*"*30)
+    drawLevel(level,playerPos)
+    playerPos =wasdCoords(playerPos)
+    
+    
+
+
+
+
+
+
+def getLevel(path):
+    with open(path, "r") as file:
+        levelArr = [[int(x) for x in line.split()] for line in file]
+    return levelArr
+
+
+
+    
