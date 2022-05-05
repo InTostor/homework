@@ -1,0 +1,31 @@
+#Currencies:
+# 1 - USD
+# 2 - GBP
+# 3 - EURO
+# 4 - CHF
+# 5 - RUB
+# 6 - zł
+# 7 - R$
+# 8 - ¥
+# 9 - kr
+# 10 - Rp
+# & moresd
+# if entered number that not in list, will be returned price in USD
+
+app_id='730'
+currency = '5'
+item_hash_name='Clutch%20Case' 
+#^^^^
+#this is from: https://steamcommunity.com/market/listings/730/Clutch%20Case
+#-------------------------------------------------------/appid/item_hash_name
+
+
+uri = 'https://steamcommunity.com/market/priceoverview/?currency='+currency+'&appid='+app_id+'&market_hash_name='+item_hash_name
+
+import urllib.request, json 
+with urllib.request.urlopen(uri) as url:
+    data = json.loads(url.read().decode())
+    print(uri)
+    print("raw",data)
+    for key, value in data.items():
+        print(key,"=",str(value))
